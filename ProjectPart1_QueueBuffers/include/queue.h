@@ -16,14 +16,16 @@
 *  contains all the information about the queue
 */
 typedef struct {
-    void        *Buffer;
-    uint32_t    Elements;
-    uint8_t     Size;
-    uint8_t     Head;
-    uint8_t     Tail;
-    uint8_t     Empty;
-    uint8_t     Full;
-}Queue_Queue;
+    void            *Buffer;
+    uint32_t        Elements;
+    uint8_t         Size;
+    uint8_t         Head;
+    uint8_t         Tail;
+    uint8_t         Empty;
+    uint8_t         Full;
+}Queue_Queue_t;
+
+
 
 
 /********************************************************************************
@@ -37,7 +39,7 @@ typedef struct {
  * \return none
  * 
  */
-void Queue_initQueue( Queue_Queue* queue );
+void Queue_initQueue( Queue_Queue_t* queue );
 
 /**
  * Function 
@@ -48,7 +50,7 @@ void Queue_initQueue( Queue_Queue* queue );
  * \return  
  * 
  */
-uint8_t Queue_writeData( Queue_Queue* queue, void *data );
+uint8_t Queue_writeData( Queue_Queue_t* queue, void *data );
 
 /**
  * Function
@@ -58,7 +60,7 @@ uint8_t Queue_writeData( Queue_Queue* queue, void *data );
  * \return 
  * 
  */
-uint8_t Queue_readData( Queue_Queue* queue, void *data );
+uint8_t Queue_readData( Queue_Queue_t* queue, void *data );
 
 /**
  * Function 
@@ -68,7 +70,19 @@ uint8_t Queue_readData( Queue_Queue* queue, void *data );
  * \return 
  * 
  */
-uint8_t Queue_isQueueEmpty( Queue_Queue* queue );
+uint8_t Queue_isQueueEmpty( Queue_Queue_t* queue );
+
+
+/**
+ * Function 
+ * 
+ * \param queue
+ * 
+ * \return 
+ * 
+ */
+void Queue_flushQueue( Queue_Queue_t* queue );
+
 
 /**
  * Function 

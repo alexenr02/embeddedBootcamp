@@ -19,7 +19,7 @@ int main( void )
     MsgType_Message MsgToRead;
 
     MsgType_Message buffer[ ELEMENTS ];
-    Queue_Queue Queue;
+    Queue_Queue_t Queue;
 
     Queue.Buffer = (void*)buffer;
     Queue.Elements = ELEMENTS;
@@ -29,8 +29,10 @@ int main( void )
     MsgToWrite.msg = 2;
     MsgToWrite.value = 100u;
     Queue_writeData( &Queue, &MsgToWrite );
-
-    while(Queue_isQueueEmpty( &Queue, &MsgToRead )) {
+    MsgToWrite.msg = 4;
+    MsgToWrite.value = 200u;
+    Queue_writeData( &Queue, &MsgToWrite );
+    while( Queue_isQueueEmpty( &Queue ) == NOT_EMPTY) {
         Queue_readData(&Queue, &MsgToRead);
         printf( "\n\nmsg read from the queue %d\n ", MsgToRead.msg);
         printf( "\n\nvalue read from the queue %d\n ", MsgToRead.value );
