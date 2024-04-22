@@ -1,0 +1,13 @@
+#blacklist all files
+*
+#whitelist all directories
+!*/
+#whitelist all files we want to commit
+!*.c
+!*.h
+!*.gitignore
+!*.py
+!*.md
+!*.py
+#blacklist specific files that have been whitelisted
+build
