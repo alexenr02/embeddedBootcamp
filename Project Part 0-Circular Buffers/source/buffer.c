@@ -59,11 +59,15 @@ unsigned char AppBuffer_readData( AppBuffer_Buffer* hbuffer ) {
     unsigned char readValue = hbuffer->Buffer[hbuffer->Tail];
     hbuffer->Buffer[hbuffer->Tail] = 0 ;
     hbuffer->Tail++;         //   Increase hbuffer->Head position to prepare for next read
+    hbuffer->Head--;
 
     // if at last index in buffer, set readIndex back to 0
     if ( hbuffer->Tail == hbuffer->Elements ) {
         hbuffer->Empty = TRUE;
         hbuffer->Tail = 0;
+    }
+    if (hbuffer->Head == 0) {
+        hbuffer->Empty = TRUE;
     }   
     
     return readValue;
