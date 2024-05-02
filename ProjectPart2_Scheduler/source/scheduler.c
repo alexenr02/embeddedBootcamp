@@ -34,64 +34,88 @@ long milliseconds (void) {
     return clock() / ( CLOCKS_PER_SEC / 1000 );
 }
 
-void Queue_initQueue( Queue_Queue_t* queue ) {
-    queue->Empty      = TRUE;
-    queue->Full       = FALSE;
-    queue->Head       = 0;
-    queue->Tail       = 0;
+void Sched_initScheduler( Sched_Scheduler_t* scheduler ) {
+    scheduler->tasksCount = 0;
 }
 
-uint8_t Queue_writeData( Queue_Queue_t* queue, void *data ) {
-    uint8_t* ptrActualPos = queue->Buffer;
-    uint8_t* ptrToWrite = NULL;
-    // check if queue is full
-    if ( queue->Full == TRUE ) {
-        printf( "\n   Queue is full! \n\n   " );
-        return FALSE;      
-    } else {
-        ptrToWrite = ptrActualPos + (queue->Tail * queue->Size);
-        queue->Empty = FALSE;
-        memcpy(ptrToWrite, data, sizeof((queue->Size)*queue->Elements));
-        queue->Tail++;
-        if ( queue->Tail == queue->Elements ) {
-            queue->Full = TRUE;
-            queue->Tail = 0;
-        }
-        return TRUE;
-    }           
-}
-
-uint8_t Queue_readData( Queue_Queue_t* queue, void* data ) {
-    uint8_t* ptrActualPos = queue->Buffer;
-    uint8_t* ptrToRead = ptrActualPos + (queue->Head * queue->Size);
-    memcpy(data, ptrToRead, sizeof((queue->Size)*queue->Elements));
-    queue->Head++;         //   Increase position to prepare for next read
-    queue->Tail--;
-
-    // if at last index in buffer, set readIndex back to 0
-    if ( queue->Head == queue->Elements ) {
-        queue->Empty = TRUE;
-        queue->Head = 0;
+uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void), void(*taskPtr)(void), uint32_t period ) {
+    
+    
+    if ( period < scheduler->tick || period % scheduler->tick != 0 ) {
+        return FALSE;
     }
-    if( queue->Tail == 0  ) {
-        queue->Empty = TRUE;
-    } 
+
+
+    if( scheduler->tasksCount >= scheduler->tasks) {
+        return FALSE;
+    }
+
+    uint8_t taskId = scheduler->tasksCount;
+    scheduler->taskPtr[taskId].initFunc = initPtr;
+    scheduler->taskPtr[taskId].taskFunc = taskPtr;
+    scheduler->taskPtr[taskId].period = period;
+    scheduler->taskPtr[taskId].elapsed = 0;
+    scheduler->taskPtr[taskId].startFlag = 0;
+
+    scheduler->tasksCount++;
+
+    return taskId;
 }
 
-uint8_t Queue_isQueueEmpty( Queue_Queue_t* queue ) {
-    if ( queue->Empty == TRUE ) {
-        printf( "\n    queue is empty!\n\n   " );
-        return EMPTY;
-    } 
-    return NOT_EMPTY;
+
+
+uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task ) {
+    uint8_t flagOn = 1;
+    uint8_t taskId = scheduler->tasksCount;
+    
+    if ( (scheduler->tasksCount < task) || (task < 1)  ) {
+        flagOn = 0;
+    }
+
+    scheduler->taskPtr[taskId].startFlag = flagOn;
+
+    return flagOn;
 }
 
-void Queue_flushQueue( Queue_Queue_t* queue ) {
-    queue->Empty = TRUE;
-    queue->Head = 0;
-    queue->Tail = 0;
-    queue->Buffer = NULL;
+uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task ) {
+    uint8_t flagOn = 0;
+    uint8_t taskId = scheduler->tasksCount;
+    
+    /*if ( (scheduler->tasksCount < task) || (task < 1)  ) {
+        flagOn = 0;
+    }*/
+
+    scheduler->taskPtr[taskId].startFlag = flagOn;
+
+    return flagOn;
 }
+
+uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_t period ) {
+
+}
+
+uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
+    long lastTime = milliseconds();
+
+    while (1) {
+        long currentTime = milliseconds();
+        long elapsedTime = currentTime - lastTime;
+
+        lastTime = currentTime;
+
+        for( uint8_t i = 0; i < scheduler->tasksCount; i++ ) {
+            Sched_Task_t *currentTask = &(scheduler->taskPtr[i]);
+            currentTask->elapsed += elapsedTime;
+
+            if (currentTask->elapsed >= currentTask->period) {
+                currentTask->taskFunc();
+                currentTask->elapsed=0;
+            }
+        }
+    }
+}
+
+
 
 //TODO test functions isbuffer empty and readData
 /********************************************************************************

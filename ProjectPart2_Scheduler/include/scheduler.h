@@ -12,25 +12,23 @@
  * Data Prototypes
  *******************************************************************************/
 
+typedef struct _task {
+    uint32_t period;
+    uint32_t elapsed;
+    uint8_t startFlag;
+    void (*initFunc) (void);
+    void (*taskFunc) (void);
+}Sched_Task_t;
+
 typedef struct {
     uint8_t tasks;
     uint32_t tick;
     uint32_t timeout;
     uint8_t tasksCount;
     Sched_Task_t *taskPtr;
-} Sched_Scheduler;
+} Sched_Scheduler_t;
 
-/* 
-* 
-*/
-typedef struct {
-    uint32_t period;
-    uint32_t elapsed;
-    uint8_t startFlag;
-    void (*ïnitFunc) (void);
-    void (*taskFunc) (void);
 
-}Sched_Task_t;
 
 
 
@@ -46,7 +44,7 @@ typedef struct {
  * \return none
  * 
  */
-void Sched_initScheduler ( Sched_Scheduler* scheduler  );
+void Sched_initScheduler ( Sched_Scheduler_t* scheduler  );
 
 /**
  * Function 
@@ -57,39 +55,50 @@ void Sched_initScheduler ( Sched_Scheduler* scheduler  );
  * \return  
  * 
  */
-uint8_t Sched_registerTask( Sched_Scheduler* scheduler, void  );
+uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void), void(*taskPtr)(void), uint32_t period );
 
 /**
  * Function
  * 
- * \param  queue
+ * \param  
  * 
  * \return 
  * 
  */
-uint8_t Queue_readData( Queue_Queue_t* queue, void *data );
+uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task );
 
 /**
  * Function 
  * 
- * \param queue
+ * \param 
  * 
  * \return 
  * 
  */
-uint8_t Queue_isQueueEmpty( Queue_Queue_t* queue );
+
+
+//uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task );
+
+/**
+ * Function 
+ * 
+ * \param 
+ *
+ * \return 
+ * 
+ */
+//uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint32_t period );
 
 
 /**
  * Function 
  * 
- * \param queue
+ * \param 
  * 
  * \return 
  * 
  */
-void Queue_flushQueue( Queue_Queue_t* queue );
-
+//uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler );
 
 /**
  * Function 

@@ -4,38 +4,51 @@
 #include "scheduler.h"
 #include "common.h"
 
-#define ELEMENTS 10
+#define TASKS_N     2
+#define TICK_VAL    100
 
-//Declare the message to be handle by the queue
-typedef struct {
-    uint8_t msg;
-    uint8_t value;
-} MsgType_Message;
+static Sched_Task_t         tasks[ TASKS_N ];
+static Sched_Scheduler_t    Sche;
+
+void Init_500ms(void);
+void Init_1000ms(void);
+void Task_500ms(void);
+void Task_1000ms(void);
 
 int main( void )
-{
-    MsgType_Message MsgToWrite;
-    MsgType_Message MsgToRead;
+{/*
+    unsigned char TaskID1;
+    unsigned char TaskID2;
 
-    MsgType_Message buffer[ ELEMENTS ];
-    Queue_Queue_t Queue;
+    /* init the scheduler with two tasks and a tick time of 100ms and run for 10 seconds only 
+    Sche.tick = TICK_VAL;
+    Sche.tasks = TASKS_N;
+    Sche.timeout = 10000;
+    Sche.taskPtr = tasks;
+    Sched_initScheduler ( &Sche );
 
-    Queue.Buffer = (void*)buffer;
-    Queue.Elements = ELEMENTS;
-    Queue.Size = sizeof( MsgType_Message );
-    Queue_initQueue( &Queue );
-    
-    MsgToWrite.msg = 2;
-    MsgToWrite.value = 100u;
-    Queue_writeData( &Queue, &MsgToWrite );
-    MsgToWrite.msg = 4;
-    MsgToWrite.value = 200u;
-    Queue_writeData( &Queue, &MsgToWrite );
-    while( Queue_isQueueEmpty( &Queue ) == NOT_EMPTY) {
-        Queue_readData(&Queue, &MsgToRead);
-        printf( "\n\nmsg read from the queue %d\n ", MsgToRead.msg);
-        printf( "\n\nvalue read from the queue %d\n ", MsgToRead.value );
-    }
-    
+    /* register two task with their corresponding init functions and their periodicity, 100ms and 500ms 
+    TaskID1 = Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 );
+    TaskID2 = Sched_registerTask( &Sche, Init_1000ms, Task_1000ms, 1000);
+
+    /* run the scheduler for the amount of time stablished in Sche.timeout 
+    Sched_startScheduler( &Sche );
+    */
     return 0;
+    
 }
+
+void Init_500ms(void) {
+    printf("Init task 500 milisecond\n");
+}
+void Init_1000ms(void) {
+    printf("Init task 1000 milisecond\n");
+}
+void Task_500ms(void) {
+    static int loop = 0;
+    printf("\nThis is a counter from task 500ms: %d", loop++);
+}
+void Task_1000ms(void) {
+    static int loop = 0;
+    printf("\nThis is a counter from task 1000ms: %d", loop++);
+} 
