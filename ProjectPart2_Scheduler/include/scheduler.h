@@ -12,10 +12,16 @@
  * Data Prototypes
  *******************************************************************************/
 
+typedef enum {
+    FALSE,
+    TRUE
+}bool_t;
+
 typedef struct _task {
     uint32_t period;
     uint32_t elapsed;
     uint8_t startFlag;
+    uint8_t taskId;
     void (*initFunc) (void);
     void (*taskFunc) (void);
 }Sched_Task_t;
@@ -77,7 +83,7 @@ uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task );
  */
 
 
-//uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task );
+uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task );
 
 /**
  * Function 
@@ -98,7 +104,7 @@ uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task );
  * \return 
  * 
  */
-//uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler );
+uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler );
 
 /**
  * Function 

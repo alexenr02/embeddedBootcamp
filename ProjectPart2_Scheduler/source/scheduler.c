@@ -50,13 +50,15 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
         return FALSE;
     }
 
+    initPtr();
+
     uint8_t taskId = scheduler->tasksCount;
     scheduler->taskPtr[taskId].initFunc = initPtr;
     scheduler->taskPtr[taskId].taskFunc = taskPtr;
     scheduler->taskPtr[taskId].period = period;
     scheduler->taskPtr[taskId].elapsed = 0;
-    scheduler->taskPtr[taskId].startFlag = 0;
-
+    scheduler->taskPtr[taskId].startFlag = TRUE;
+    scheduler->taskPtr[taskId].taskId = taskId;
     scheduler->tasksCount++;
 
     return taskId;
@@ -66,26 +68,24 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
 
 uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task ) {
     uint8_t flagOn = 1;
-    uint8_t taskId = scheduler->tasksCount;
     
     if ( (scheduler->tasksCount < task) || (task < 1)  ) {
         flagOn = 0;
     }
 
-    scheduler->taskPtr[taskId].startFlag = flagOn;
+    scheduler->taskPtr[task].startFlag = flagOn;
 
     return flagOn;
 }
 
 uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task ) {
     uint8_t flagOn = 0;
-    uint8_t taskId = scheduler->tasksCount;
     
     /*if ( (scheduler->tasksCount < task) || (task < 1)  ) {
         flagOn = 0;
     }*/
 
-    scheduler->taskPtr[taskId].startFlag = flagOn;
+    scheduler->taskPtr[task].startFlag = flagOn;
 
     return flagOn;
 }
@@ -96,8 +96,9 @@ uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_
 
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     long lastTime = milliseconds();
-
-    while (1) {
+    long startTime = milliseconds();
+    bool_t timeOutFlag = FALSE;
+    while (timeOutFlag == FALSE) {
         long currentTime = milliseconds();
         long elapsedTime = currentTime - lastTime;
 
@@ -107,10 +108,16 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
             Sched_Task_t *currentTask = &(scheduler->taskPtr[i]);
             currentTask->elapsed += elapsedTime;
 
-            if (currentTask->elapsed >= currentTask->period) {
+            if (currentTask->elapsed >= currentTask->period && currentTask->startFlag == TRUE) {
                 currentTask->taskFunc();
                 currentTask->elapsed=0;
             }
+        }
+        if( (currentTime - startTime) >= scheduler->timeout ) {
+            timeOutFlag = TRUE;
+        }
+        if ( (currentTime - startTime) >= (scheduler->timeout/2) ) {
+            Sched_stopTask(scheduler, 0);
         }
     }
 }
