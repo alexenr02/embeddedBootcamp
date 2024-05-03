@@ -48,9 +48,8 @@ typedef struct {
  * \param  
  * 
  * \return none
- * 
  */
-void Sched_initScheduler ( Sched_Scheduler_t* scheduler  );
+void Sched_initScheduler ( Sched_Scheduler_t* scheduler, uint8_t tasks, uint32_t tick, uint32_t timeout, Sched_Task_t* taskPtr );
 
 /**
  * Function 
