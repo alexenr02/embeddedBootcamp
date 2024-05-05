@@ -61,6 +61,7 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
     scheduler->taskPtr[taskId].startFlag = TRUE;
     scheduler->taskPtr[taskId].taskId = taskId + 1;
     scheduler->tasksCount++;
+    printf("task number: %d, period: %d \n\n",scheduler->taskPtr[taskId].taskId, scheduler->taskPtr[taskId].period );
     return scheduler->taskPtr[taskId].taskId;
 }
 
@@ -91,7 +92,13 @@ uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task ) {
 }
 
 uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_t period ) {
-
+    if ( period < scheduler->tick || period % scheduler->tick != 0 ) {
+        return FALSE;
+    }
+    uint32_t lastPeriod = scheduler->taskPtr[task].period;
+    scheduler->taskPtr[task].period = period;
+    printf(" Task number %d changed its period from %d to %d successfully\n", task, lastPeriod, period);
+    return TRUE;
 }
 
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
@@ -100,6 +107,8 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     long currentTime = 0;
     long elapsedTime = 0;
     bool_t timeOutFlag = FALSE;
+    Sched_periodicTask(scheduler, 0, 100);
+    Sched_periodicTask(scheduler, 0, 500);
     while (timeOutFlag == FALSE) {
         currentTime = milliseconds();
         elapsedTime = currentTime - lastTime;
