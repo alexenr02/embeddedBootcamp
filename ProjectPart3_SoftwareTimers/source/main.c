@@ -26,7 +26,6 @@ int main( void )
     /* Init the scheduler with two tasks and a tick time of 100mS and run for 10 seconds only */
     Sched_initScheduler ( &Sche, TASKS_N, TICK_VAL, TIMEOUT, tasks, TIMERS_N, timers );
     printf("\n\n\n");
-    printf( "Scheduler initialized succesfully\n\n" );
     /* register two tasks with their corresponding init functions and their periodicity, 100 mS and 500 mS */
     TaskId      = Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 );
     TimerId     = Sched_registerTimer( &Sche, 6000u, Callback );

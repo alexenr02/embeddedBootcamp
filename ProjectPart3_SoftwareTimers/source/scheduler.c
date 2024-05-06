@@ -42,11 +42,6 @@ void Sched_initScheduler( Sched_Scheduler_t* scheduler, uint8_t tasks, uint32_t 
     scheduler->tasksCount = 0;
     scheduler->timers = timers;
     scheduler->timerPtr = timerPtr;
-
-    printf("\n\n-------------- Init timer info-----------------------\n\n");
-    printf(" \tTimers %d, timer add: %x \n\n", scheduler->timers, scheduler->timerPtr );
-    printf("-------------------------------------------------------");
-    printf("\n\n\n");
     printf( "Scheduler initialized succesfully\n\n" );
 }
 
@@ -129,19 +124,12 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
 
 
     Sched_Timer_t *currentTimer = scheduler->timerPtr;
-    printf("\n\n-------------- Registered timer info222-----------------------\n\n");
+    printf("\n\n-------------- Registered timer info-----------------------\n\n");
     printf(" Timer %d, timeout: %d, count: %d, timer status: %d, current timer add: %x \n\n", 0,currentTimer[0].timeout, currentTimer[0 ].count, currentTimer[0 ].startFlag, currentTimer );
     //printf(" current timer add: %x \n\n", scheduler->timerPtr );
     printf("-------------------------------------------------------");
     printf("\n\n\n");
-/*
-    printf("started: %ld", startTime);
-    for(long long x = 0; x < (long long)16000000000; x++) {
-        
-    }
-    endTime = milliseconds();
-    printf("\n\nend: %ld", endTime);
-*/
+
     while (timeOutFlag == FALSE) {
         currentTime = milliseconds();
         elapsedTime = currentTime - lastTime;
@@ -154,7 +142,6 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
         if(generalTickElapsedTime > scheduler->tick) {
             generalTickElapsedTime = 0;
             tickCounterFlag = TRUE;
-            //printf("\n\ntick");
         }
 
         for( uint8_t i = 0; i < scheduler->tasksCount; i++ ) {
@@ -233,7 +220,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
         //scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
 
-        printf(" Timer %d activated succesfully. \n\n", timer);
+        printf("Timer %d activated succesfully. \n\n", timer);
         return TRUE;
     } else {
         return FALSE;
