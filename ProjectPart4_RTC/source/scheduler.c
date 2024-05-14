@@ -115,8 +115,8 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     long generalTickStartTime = milliseconds();
     long generalTickLastTime = milliseconds();
     long generalTickCurrentTime = 0;
+    long generalTickCheckerAccumulator = 0;
     long generalTickElapsedTime = 0;
-    long elapsedTime = 0;
 
     Sched_Timer_t *currentTimer = scheduler->timerPtr;
     if ( currentTimer != NULL ) {
@@ -128,19 +128,19 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
 
     while (timeOutFlag == FALSE) {
         generalTickCurrentTime = milliseconds();
-        elapsedTime = generalTickCurrentTime - generalTickLastTime;
-        generalTickElapsedTime += generalTickCurrentTime - generalTickLastTime;
+        generalTickElapsedTime = generalTickCurrentTime - generalTickLastTime;
+        generalTickCheckerAccumulator += generalTickCurrentTime - generalTickLastTime;
         generalTickLastTime = generalTickCurrentTime;   
 
         tickCounterFlag = FALSE;
-        if(generalTickElapsedTime > scheduler->tick) {
-            generalTickElapsedTime = 0;
+        if(generalTickCheckerAccumulator > scheduler->tick) {
+            generalTickCheckerAccumulator = 0;
             tickCounterFlag = TRUE;
         }
 
         for( uint8_t i = 0; i < scheduler->tasksCount; i++ ) {
             Sched_Task_t *currentTask = &(scheduler->taskPtr[i]);
-            currentTask->elapsed += elapsedTime;
+            currentTask->elapsed += generalTickElapsedTime;
             if (currentTask->elapsed >= currentTask->period && currentTask->startFlag == TRUE) {
                 currentTask->taskFunc();
                 currentTask->elapsed=0;
