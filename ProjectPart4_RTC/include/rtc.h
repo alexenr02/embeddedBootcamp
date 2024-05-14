@@ -20,7 +20,7 @@ typedef union _Rtcc_Ctrl {
         uint8_t al_active: 1; /*!< alarm active flag  */
         uint8_t none : 4;
     } bits;
-} Rtcc_Ctrl;
+} Rtcc_Ctrl_t;
 
 /* Control structure to pass parameter on each interface */
 typedef struct _Rtcc_Clock {
@@ -29,13 +29,13 @@ typedef struct _Rtcc_Clock {
     uint8_t     tm_hour;        /*!< hours, range 0 to 23 */
     uint8_t     tm_day;         /*!< day of the month, range 1 to 31 */
     uint8_t     tm_mon;         /*!< month, range 1 to 12 */
-    uint8_t     tm_year;        /*!< years, range 1900 to 2100 */
+    uint16_t    tm_year;        /*!< years, range 1900 to 2100 */
     uint8_t     tm_wday;        /*!< day of the week, range 0 to 6 */
     uint8_t     al_min;         /*!< alarm minutes, range 0 to 59 */
     uint8_t     al_hour;        /*!< alarm hours, range 0 to 23 */
     uint8_t     mt_days[13u];   /*!< max days on each month */
-    Rtcc_Ctrl   ctrl;           /*!< clock control bits */
-} Rtcc_Clock;
+    Rtcc_Ctrl_t   ctrl;           /*!< clock control bits */
+} Rtcc_Clock_t;
 
 
 
@@ -49,7 +49,7 @@ typedef struct _Rtcc_Clock {
  * 
  * \return none
  */
-void Rtcc_clockInit(Rtcc_Clock *rtcc);
+void Rtcc_clockInit(Rtcc_Clock_t *rtcc);
 
 /**
  * Function 
@@ -58,7 +58,7 @@ void Rtcc_clockInit(Rtcc_Clock *rtcc);
  * 
  * \return none
  */
-uint8_t Rtcc_setTime(Rtcc_Clock *rtcc, uint8_t hour, uint8_t minutes, uint8_t seconds);
+uint8_t Rtcc_setTime(Rtcc_Clock_t *rtcc, uint8_t hour, uint8_t minutes, uint8_t seconds);
 
 /**
  * Function 
@@ -67,7 +67,7 @@ uint8_t Rtcc_setTime(Rtcc_Clock *rtcc, uint8_t hour, uint8_t minutes, uint8_t se
  * 
  * \return none
  */
-uint8_t Rtcc_setDate(Rtcc_Clock *rtcc, uint8_t day, uint8_t month, uint16_t year);
+uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t year);
 
 /**
  * Function 
@@ -76,7 +76,7 @@ uint8_t Rtcc_setDate(Rtcc_Clock *rtcc, uint8_t day, uint8_t month, uint16_t year
  * 
  * \return none
  */
-uint8_t Rtcc_setAlarm(Rtcc_Clock *rtcc, uint8_t hour, uint8_t minutes);
+uint8_t Rtcc_setAlarm(Rtcc_Clock_t *rtcc, uint8_t hour, uint8_t minutes);
 
 /**
  * Function 
@@ -85,7 +85,7 @@ uint8_t Rtcc_setAlarm(Rtcc_Clock *rtcc, uint8_t hour, uint8_t minutes);
  * 
  * \return none
  */
-void Rtcc_getTime(Rtcc_Clock *rtcc, uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
+void Rtcc_getTime(Rtcc_Clock_t *rtcc, uint8_t *hour, uint8_t *minutes, uint8_t *seconds);
 
 /**
  * Function 
@@ -94,7 +94,7 @@ void Rtcc_getTime(Rtcc_Clock *rtcc, uint8_t *hour, uint8_t *minutes, uint8_t *se
  * 
  * \return none
  */
-void Rtcc_getDate(Rtcc_Clock *rtcc, uint8_t* day, uint8_t* month, uint16_t* year, uint8_t* weekDay);
+void Rtcc_getDate(Rtcc_Clock_t *rtcc, uint8_t* day, uint8_t* month, uint16_t* year, uint8_t* weekDay);
 
 /**
  * Function 
@@ -103,7 +103,7 @@ void Rtcc_getDate(Rtcc_Clock *rtcc, uint8_t* day, uint8_t* month, uint16_t* year
  * 
  * \return none
  */
-uint8_t Rtcc_getAlarm(Rtcc_Clock *rtcc, uint8_t* hour, uint8_t* minutes );
+uint8_t Rtcc_getAlarm(Rtcc_Clock_t *rtcc, uint8_t* hour, uint8_t* minutes );
 
 /**
  * Function 
@@ -112,7 +112,7 @@ uint8_t Rtcc_getAlarm(Rtcc_Clock *rtcc, uint8_t* hour, uint8_t* minutes );
  * 
  * \return none
  */
-void Rtcc_clearAlarm( Rtcc_Clock *rtcc );
+void Rtcc_clearAlarm( Rtcc_Clock_t *rtcc );
 
 /**
  * Function 
@@ -121,7 +121,7 @@ void Rtcc_clearAlarm( Rtcc_Clock *rtcc );
  * 
  * \return none
  */
-uint8_t Rtcc_getAlarmFlag( Rtcc_Clock *rtcc );
+uint8_t Rtcc_getAlarmFlag( Rtcc_Clock_t *rtcc );
 
 /**
  * Function 
@@ -130,6 +130,6 @@ uint8_t Rtcc_getAlarmFlag( Rtcc_Clock *rtcc );
  * 
  * \return none
  */
-void Rtcc_periodicTask( Rtcc_Clock *rtcc );
+void Rtcc_periodicTask( Rtcc_Clock_t *rtcc );
 
 #endif /* __RTC_H */

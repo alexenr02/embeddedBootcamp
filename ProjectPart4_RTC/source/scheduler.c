@@ -17,6 +17,7 @@
 #include <time.h>
 #include "scheduler.h"
 #include "common.h"
+#include "rtc.h"
 
 /********************************************************************************
  * Variable Declarations
@@ -110,25 +111,23 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     long currentTime = 0;
     long elapsedTime = 0;
 
-    bool_t tickCounterFlag = 0;
+    bool_t tickCounterFlag = FALSE;
     bool_t timeOutFlag = FALSE;
-    bool_t timersStarted = FALSE;
     bool_t stopTimer = FALSE;
-    bool_t timerStartedFlag = FALSE;
 
     long generalTickStartTime = startTime;
     long generalTickLastTime = lastTime;
     long generalTickCurrentTime = 0;
     long generalTickElapsedTime = 0;
-    long generalTickElapsedTimeAcc = 0;
 
 
     Sched_Timer_t *currentTimer = scheduler->timerPtr;
-    printf("\n\n-------------- Registered timer info-----------------------\n\n");
-    printf(" Timer %d, timeout: %d, count: %d, timer status: %d, current timer add: %x \n\n", 0,currentTimer[0].timeout, currentTimer[0 ].count, currentTimer[0 ].startFlag, currentTimer );
-    //printf(" current timer add: %x \n\n", scheduler->timerPtr );
-    printf("-------------------------------------------------------");
-    printf("\n\n\n");
+    if ( currentTimer != NULL ) {
+        PRINT("\n\n-------------- Registered timer info-----------------------\n\n");
+        PRINT_PARAMS(" Timer %d, timeout: %d, count: %d, timer status: %d, current timer add: %x \n\n",0,currentTimer[0].timeout, currentTimer[0 ].count, currentTimer[0 ].startFlag, currentTimer);
+        PRINT("-------------------------------------------------------");
+        PRINT("\n\n\n");
+    }
 
     while (timeOutFlag == FALSE) {
         currentTime = milliseconds();
@@ -153,22 +152,24 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
             }
             
         }
-        
-        for( uint8_t i = 0; i < scheduler->timersCount; i++ ) {
-            Sched_Timer_t *currentTimer = scheduler->timerPtr;
-            if( tickCounterFlag == TRUE && currentTimer[i].startFlag == TRUE) {
-                if (currentTimer[i].runFlag == FALSE) {
-                    printf("\n\ntimer %d running\n\n", i);
-                    currentTimer[i].runFlag = TRUE;
-                }
-                currentTimer[i].count--;
-                if(currentTimer[i].count == 0) {
-                    Sched_stopTimer(scheduler, i);
-                }
-            } 
+        if ( currentTimer != NULL ) {
+            for( uint8_t i = 0; i < scheduler->timersCount; i++ ) {
+                Sched_Timer_t *currentTimer = scheduler->timerPtr;
+                if( tickCounterFlag == TRUE && currentTimer[i].startFlag == TRUE) {
+                    if (currentTimer[i].runFlag == FALSE) {
+                        printf("\n\ntimer %d running\n\n", i);
+                        currentTimer[i].runFlag = TRUE;
+                    }
+                    currentTimer[i].count--;
+                    if(currentTimer[i].count == 0) {
+                        Sched_stopTimer(scheduler, i);
+                    }
+                } 
+            }
         }
         if( (currentTime - startTime) >= scheduler->timeout ) {
             timeOutFlag = TRUE;
+            printf("\n\n Timeout... \n\n");
         }
     }
 }
@@ -219,7 +220,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
     /* timer is registered and it has a valid ID */
     if ( timer <= scheduler->timers && scheduler->timersCount > 0 ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
-        //scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
+        scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
 
         printf("Timer %d activated succesfully. \n\n", timer);
         return TRUE;
