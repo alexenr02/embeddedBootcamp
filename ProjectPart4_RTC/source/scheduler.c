@@ -105,21 +105,18 @@ uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_
 }
 
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
-    long lastTime = milliseconds();
-    long startTime = milliseconds();
-    long endTime = 0;
-    long currentTime = 0;
-    long elapsedTime = 0;
+    
 
     bool_t tickCounterFlag = FALSE;
     bool_t timeOutFlag = FALSE;
     bool_t stopTimer = FALSE;
-
-    long generalTickStartTime = startTime;
-    long generalTickLastTime = lastTime;
+    
+    
+    long generalTickStartTime = milliseconds();
+    long generalTickLastTime = milliseconds();
     long generalTickCurrentTime = 0;
     long generalTickElapsedTime = 0;
-
+    long elapsedTime = 0;
 
     Sched_Timer_t *currentTimer = scheduler->timerPtr;
     if ( currentTimer != NULL ) {
@@ -130,13 +127,11 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     }
 
     while (timeOutFlag == FALSE) {
-        currentTime = milliseconds();
-        elapsedTime = currentTime - lastTime;
-        lastTime = currentTime;
-        
         generalTickCurrentTime = milliseconds();
+        elapsedTime = generalTickCurrentTime - generalTickLastTime;
         generalTickElapsedTime += generalTickCurrentTime - generalTickLastTime;
-        generalTickLastTime = generalTickCurrentTime;
+        generalTickLastTime = generalTickCurrentTime;   
+
         tickCounterFlag = FALSE;
         if(generalTickElapsedTime > scheduler->tick) {
             generalTickElapsedTime = 0;
