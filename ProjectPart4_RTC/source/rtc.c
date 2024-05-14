@@ -74,7 +74,7 @@ uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t ye
     if ( year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
         leap = TRUE;
     }
-    printf("Date: %d/%d/%d\n\n", day,month,year);
+    printf("Date: %d/%d/%d\n", day,month,year);
     uint16_t dayOfWeek = year;
     uint8_t lastTwoDigits = year;
     if ( (dayOfWeek - 2000) < 0 ) {
@@ -139,7 +139,7 @@ uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t ye
             break;
             
     }
-    //rtcc->tm_wday = dayOfWeek / 7;
+
     if ( (year - 2000) < 0 ) {
         dayOfWeek = dayOfWeek;
     } else {
@@ -198,10 +198,8 @@ uint8_t Rtcc_getAlarmFlag( Rtcc_Clock_t *rtcc ) {
 }
 
 void Rtcc_periodicTask( Rtcc_Clock_t *rtcc ) {
-    
-    
-    while (1) {
-    }
+    // simplemente sumar tiempo cada vez q se llame esta funcion
+
 }
 
 /********************************************************************************

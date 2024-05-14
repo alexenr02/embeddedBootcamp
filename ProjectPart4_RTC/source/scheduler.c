@@ -65,7 +65,7 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
     scheduler->taskPtr[taskId].startFlag = TRUE;
     scheduler->taskPtr[taskId].taskId = taskId + 1;
     scheduler->tasksCount++;
-    printf("task number: %d, period: %d \n\n",scheduler->taskPtr[taskId].taskId, scheduler->taskPtr[taskId].period );
+    PRINT_PARAMS("task number: %d, period: %d \n\n",scheduler->taskPtr[taskId].taskId, scheduler->taskPtr[taskId].period );
     return scheduler->taskPtr[taskId].taskId;
 }
 
@@ -107,16 +107,15 @@ uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     
 
-    bool_t tickCounterFlag = FALSE;
-    bool_t timeOutFlag = FALSE;
-    bool_t stopTimer = FALSE;
+    bool_t tickCounterFlag = FALSE;             // Indicate if a tick period is reached
+    bool_t timeOutFlag = FALSE;                 // Indicate if the scheduler reaches the general timeout
+    bool_t stopTimer = FALSE;                   // Flag to stop the timer(s)
     
-    
-    long generalTickStartTime = milliseconds();
-    long generalTickLastTime = milliseconds();
-    long generalTickCurrentTime = 0;
-    long generalTickCheckerAccumulator = 0;
-    long generalTickElapsedTime = 0;
+    long generalTickStartTime = milliseconds(); // Scheduler start time 
+    long generalTickLastTime = milliseconds();  // Scheduler last time since last computer tick
+    long generalTickCurrentTime = 0;            // Scheduler current time
+    long generalTickCheckerAccumulator = 0;     // Scheduler elapsed time accumulator that is erased on every scheduler tick
+    long generalTickElapsedTime = 0;            // Scheduler elapsed time since last computer tick
 
     Sched_Timer_t *currentTimer = scheduler->timerPtr;
     if ( currentTimer != NULL ) {
@@ -127,17 +126,20 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     }
 
     while (timeOutFlag == FALSE) {
+
         generalTickCurrentTime = milliseconds();
         generalTickElapsedTime = generalTickCurrentTime - generalTickLastTime;
         generalTickCheckerAccumulator += generalTickCurrentTime - generalTickLastTime;
         generalTickLastTime = generalTickCurrentTime;   
 
+        /* Activates the flag when on every tick */
         tickCounterFlag = FALSE;
         if(generalTickCheckerAccumulator > scheduler->tick) {
             generalTickCheckerAccumulator = 0;
             tickCounterFlag = TRUE;
         }
 
+        /* Check if the tasks are on time to execute them */
         for( uint8_t i = 0; i < scheduler->tasksCount; i++ ) {
             Sched_Task_t *currentTask = &(scheduler->taskPtr[i]);
             currentTask->elapsed += generalTickElapsedTime;
@@ -147,12 +149,14 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
             }
             
         }
+
+        /* If there are any timer, start, continue or stop counting */
         if ( currentTimer != NULL ) {
             for( uint8_t i = 0; i < scheduler->timersCount; i++ ) {
                 Sched_Timer_t *currentTimer = scheduler->timerPtr;
                 if( tickCounterFlag == TRUE && currentTimer[i].startFlag == TRUE) {
                     if (currentTimer[i].runFlag == FALSE) {
-                        printf("\n\ntimer %d running\n\n", i);
+                        printf("\n\ntimer %d running\n\n", i+1);
                         currentTimer[i].runFlag = TRUE;
                     }
                     currentTimer[i].count--;
@@ -162,6 +166,8 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
                 } 
             }
         }
+
+        /* Check if the scheduler reached its timeout */
         if( (generalTickCurrentTime - generalTickStartTime) >= scheduler->timeout ) {
             timeOutFlag = TRUE;
             printf("\n\n Timeout... \n\n");
@@ -217,7 +223,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
         scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
 
-        printf("Timer %d activated succesfully. \n\n", timer);
+        printf("Timer %d reloaded and activated succesfully. \n\n", timer);
         return TRUE;
     } else {
         return FALSE;
