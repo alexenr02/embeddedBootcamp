@@ -167,7 +167,7 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
                 } 
             }
         }
-        if( (currentTime - startTime) >= scheduler->timeout ) {
+        if( (generalTickCurrentTime - generalTickStartTime) >= scheduler->timeout ) {
             timeOutFlag = TRUE;
             printf("\n\n Timeout... \n\n");
         }
