@@ -198,8 +198,105 @@ uint8_t Rtcc_getAlarmFlag( Rtcc_Clock_t *rtcc ) {
 }
 
 void Rtcc_periodicTask( Rtcc_Clock_t *rtcc ) {
-    // simplemente sumar tiempo cada vez q se llame esta funcion
+    rtcc->tm_sec++;
+    if ( rtcc->tm_sec > 59 ) {
+        rtcc->tm_min++;
+        rtcc->tm_sec = 0;
+    }
 
+    if ( rtcc->tm_min > 59 ) {
+        rtcc->tm_min = 0;
+        rtcc->tm_hour++;
+    }
+
+    if ( rtcc->tm_hour > 23 ) {
+        rtcc->tm_hour = 0;
+        rtcc->tm_day++;
+    }
+
+    switch (rtcc->tm_mon) {
+        case 1:
+            if (rtcc->tm_day > rtcc->mt_days[0]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 2:
+            if ( rtcc->tm_year % 4 == 0 && rtcc->tm_year % 100 != 0 || rtcc->tm_year % 400 == 0) {
+               if (rtcc->tm_day > (rtcc->mt_days[1] + 1)) {
+                    rtcc->tm_day = 1;
+                    rtcc->tm_mon++;
+                } 
+            } else {
+                if (rtcc->tm_day > rtcc->mt_days[1]) {
+                    rtcc->tm_day = 1;
+                    rtcc->tm_mon++;
+                }
+            }
+        break;
+        case 3:
+            if (rtcc->tm_day > rtcc->mt_days[2]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 4:
+            if (rtcc->tm_day > rtcc->mt_days[3]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 5:
+            if (rtcc->tm_day > rtcc->mt_days[4]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 6:
+            if (rtcc->tm_day > rtcc->mt_days[5]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 7:
+            if (rtcc->tm_day > rtcc->mt_days[6]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 8:
+            if (rtcc->tm_day > rtcc->mt_days[7]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 9:
+            if (rtcc->tm_day > rtcc->mt_days[8]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 10:
+            if (rtcc->tm_day > rtcc->mt_days[9]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 11:
+            if (rtcc->tm_day > rtcc->mt_days[10]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon++;
+            }
+        break;
+        case 12:
+            if (rtcc->tm_day > rtcc->mt_days[11]) {
+                rtcc->tm_day = 1;
+                rtcc->tm_mon = 1;
+            }
+        break;
+        default:
+        break;
+    }
 }
 
 /********************************************************************************
