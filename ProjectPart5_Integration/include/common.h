@@ -36,8 +36,4 @@ typedef enum {
 #define DEBUG(value)
 #endif
 
-static long milliseconds (void) {
-    return clock() / ( CLOCKS_PER_SEC / 1000 );
-}
-
 #endif /* __BUFFER_H */

@@ -117,8 +117,7 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     long generalTickCheckerAccumulator = 0;     // Scheduler elapsed time accumulator that is erased on every scheduler tick
     long generalTickElapsedTime = 0;            // Scheduler elapsed time since last computer tick
 
-    Sched_Timer_t *currentTimer = scheduler->timerPtr;
-    if ( currentTimer != NULL ) {
+    if ( scheduler->timerPtr != NULL ) {
         PRINT("\n\n-------------- Registered timer info-----------------------\n\n");
         PRINT_PARAMS(" Timer %d, timeout: %d, count: %d, timer status: %d, current timer add: %x \n\n",0,currentTimer[0].timeout, currentTimer[0 ].count, currentTimer[0 ].startFlag, currentTimer);
         PRINT("-------------------------------------------------------");
@@ -151,7 +150,7 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
         }
 
         /* If there are any timer, start, continue or stop counting */
-        if ( currentTimer != NULL ) {
+        if ( scheduler->timerPtr != NULL ) {
             for( uint8_t i = 0; i < scheduler->timersCount; i++ ) {
                 Sched_Timer_t *currentTimer = scheduler->timerPtr;
                 if( tickCounterFlag == TRUE && currentTimer[i].startFlag == TRUE) {
@@ -190,8 +189,6 @@ uint8_t  Sched_registerTimer( Sched_Scheduler_t *scheduler, uint32_t timeout, vo
     currentTimer[timerId].callbackPtr = callbackPtr;
 
     timerId = ++scheduler->timersCount;
-    printf("Timer %d registered succesfully\n\n", timerId);
-
     return timerId;
 }
 
@@ -221,7 +218,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
     /* timer is registered and it has a valid ID */
     if ( timer <= scheduler->timers && scheduler->timersCount > 0 ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
-        scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
+        scheduler->timerPtr[timer - 1].count = (scheduler->timerPtr[timer - 1].timeout)/scheduler->tick;
 
         printf("Timer %d reloaded and activated succesfully. \n\n", timer);
         return TRUE;

@@ -24,7 +24,7 @@ typedef struct _Message
 
 static Sched_Task_t         tasks[ TASKS_N ];
 static Sched_Scheduler_t    Sche;
-static Rtcc_Clock           rtccClock;
+static Rtcc_Clock_t         rtccClock;
 static Queue_Queue_t        rtccQueue;
 static Sched_Timer_t        timers[ TIMERS_N ];
 static unsigned char        TimerId;
@@ -52,7 +52,7 @@ int main( void )
     Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 );
     Sched_registerTask( &Sche, Init_1000ms, Task_1000ms, 1000 );
     printf("\n\n\n");
-    TimerId     = Sched_registerTimer( &Sche, 6000u, Callback );
+    TimerId     = Sched_registerTimer( &Sche, 3000u, Callback );
     printf("Task ID: %d, timer ID: %d \n\n", TaskId, TimerId);
 
 
