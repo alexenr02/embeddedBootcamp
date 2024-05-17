@@ -21,6 +21,21 @@ typedef enum {
 
 }systemErrors_t;
 
+#if 0
+#define ENABLE_DEBUG_MESSAGES
+#endif
+
+
+#ifdef  ENABLE_DEBUG_MESSAGES
+#define PRINT_PARAMS(value,...)             printf( #value "\n",## __VA_ARGS__);
+#define PRINT(value)                        printf( #value "\n");
+#define DEBUG(value)                        value
+#else
+#define PRINT_PARAMS(value,...) 
+#define PRINT(value)
+#define DEBUG(value)
+#endif
+
 static long milliseconds (void) {
     return clock() / ( CLOCKS_PER_SEC / 1000 );
 }
