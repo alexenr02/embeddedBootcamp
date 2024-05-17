@@ -51,13 +51,13 @@ void Task_500ms(void) {
 
 void Init_1000ms(void) {
     Rtcc_clockInit( &rtccClock );
-    Rtcc_setTime( &rtccClock, 12, 30, 0 );
-    Rtcc_setDate( &rtccClock, 24, 6, 1984 );
+    assert(Rtcc_setTime( &rtccClock, 23, 59, 55 ));
+    assert(Rtcc_setDate( &rtccClock, 31, 12, 2023 ));
     printf("\nInit task 1000 millisecond\n");
 }
 void Task_1000ms(void) {
     static int loop = 0;
-    Callback();
+    Rtcc_periodicTask(&rtccClock);
     printf("\nThis is a counter from task 1000ms: %d", loop++);
 }
 
