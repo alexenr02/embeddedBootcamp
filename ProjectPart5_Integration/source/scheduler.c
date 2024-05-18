@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "scheduler.h"
 #include "common.h"
 #include "rtc.h"
@@ -107,9 +108,9 @@ uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     
 
-    bool_t tickCounterFlag = FALSE;             // Indicate if a tick period is reached
-    bool_t timeOutFlag = FALSE;                 // Indicate if the scheduler reaches the general timeout
-    bool_t stopTimer = FALSE;                   // Flag to stop the timer(s)
+    bool tickCounterFlag = FALSE;             // Indicate if a tick period is reached
+    bool timeOutFlag = FALSE;                 // Indicate if the scheduler reaches the general timeout
+    bool stopTimer = FALSE;                   // Flag to stop the timer(s)
     
     long generalTickStartTime = milliseconds(); // Scheduler start time 
     long generalTickLastTime = milliseconds();  // Scheduler last time since last computer tick

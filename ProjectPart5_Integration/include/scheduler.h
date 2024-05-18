@@ -12,11 +12,6 @@
  * Data Prototypes
  *******************************************************************************/
 
-typedef enum {
-    FALSE,
-    TRUE
-}bool_t;
-
 typedef struct _task {
     uint32_t        period;
     uint32_t        elapsed;

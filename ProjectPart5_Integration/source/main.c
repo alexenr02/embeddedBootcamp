@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "common.h"
 #include "scheduler.h"
 #include "queue.h"
 #include "rtc.h"
@@ -53,7 +54,7 @@ int main( void )
     Sched_registerTask( &Sche, Init_1000ms, Task_1000ms, 1000 );
     printf("\n\n\n");
     TimerId     = Sched_registerTimer( &Sche, 3000u, Callback );
-    printf("Task ID: %d, timer ID: %d \n\n", TaskId, TimerId);
+    PRINT_PARAMS("Task ID: %d, timer ID: %d \n\n", TaskId, TimerId);
 
 
     Sched_startTimer(&Sche, TimerId);
@@ -93,17 +94,19 @@ void Init_1000ms(void)
  * Read the queue and print the time and date if a new message arrives
 */
 void Task_500ms(void)
-{ /*
+{ 
     Message msgToRead;
-    /*Query if a new message arrive from the queue
+    static int loop = 0;
+    printf("\nThis is a counter from task 500ms: %d", loop++);
+    /* Query if a new message arrive from the queue */
     if( Queue_isQueueEmpty( &rtccQueue ) == 0 )
     {
-        /*Read the message in the queue
+        /* Read the message in the queue */
         Queue_readData( &rtccQueue, &msgToRead );
-        printf("Time - %d:%d:%d\n", msgToRead.hour, msgToRead.minutes, msgToRead.seconds );
-        printf("Date - %d/%d/%d\n", msgToRead.day, msgToRead.month, msgToRead.year );
-    }*/
-    printf("Running: task 500 millisecond\n");
+        printf("\nTask 500 ms: Time - %d:%d:%d\n", msgToRead.hour, msgToRead.minutes, msgToRead.seconds );
+        printf("\nTask 500 ms: Date - %d/%d/%d\n", msgToRead.day, msgToRead.month, msgToRead.year );
+    }
+    printf("\nRunning: task 500 millisecond\n");
 }
 
 /**
@@ -114,17 +117,18 @@ void Task_500ms(void)
 */
 void Task_1000ms(void)
 {
-    printf("Running: task 1000 millisecond\n");
-    /*
+    static int loop = 0;
+    printf("\nThis is a counter from task 1000ms: %d", loop++);
+    printf("\nRunning: task 1000 millisecond\n");
     Message msgToWrite;
-    /*Clock periodic task
+    /*Clock periodic task */
     Rtcc_periodicTask( &rtccClock );
-    /*get time and date
+    /*get time and date */
     Rtcc_getTime( &rtccClock, &msgToWrite.hour, &msgToWrite.minutes, &msgToWrite.seconds );
     Rtcc_getDate( &rtccClock, &msgToWrite.day, &msgToWrite.month, &msgToWrite.year, &msgToWrite.wday );
-    /*send time and date to 500ms task using a queue
+    /*send time and date to 500ms task using a queue */
     Queue_writeData( &rtccQueue, &msgToWrite );
-    */
+    
 }
 
 void Callback (void) {
