@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "scheduler.h"
 #include "rtc.h"
 #include "common.h"
@@ -79,7 +80,7 @@ uint8_t Rtcc_setTime(Rtcc_Clock_t *rtcc, uint8_t hour, uint8_t minutes, uint8_t 
 
 
 uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t year) {
-    bool_t leap = FALSE;
+    bool leap = FALSE;
     if ( year % 4 == 0 && year % 100 != 0 || year % 400 == 0) {
         leap = TRUE;
     }
@@ -164,7 +165,7 @@ uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t ye
         default:
         break;
     }
-    printf("Date: %d/%d/%d\n", day,month,year);
+    PRINT("Date: %d/%d/%d\n", day,month,year);
     uint16_t dayOfWeek = year;
     uint8_t lastTwoDigits = year;
     if ( (dayOfWeek - 2000) < 0 ) {
@@ -387,8 +388,8 @@ void Rtcc_periodicTask( Rtcc_Clock_t *rtcc ) {
             }
         }
     }
-    printf("\n\nDate: %d/%d/%d \n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
-    printf("Hour: %d:%d:%d \n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
+    PRINT("\n\nDate: %d/%d/%d \n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
+    PRINT("Hour: %d:%d:%d \n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
 }
 
 /********************************************************************************

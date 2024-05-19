@@ -221,7 +221,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
     /* timer is registered and it has a valid ID */
     if ( timer <= scheduler->timers && scheduler->timersCount > 0 ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
-        scheduler->timerPtr[timer - 1].count = scheduler->timerPtr[timer - 1].timeout;
+        scheduler->timerPtr[timer - 1].count = (scheduler->timerPtr[timer - 1].timeout)/scheduler->tick;
 
         printf("Timer %d reloaded and activated succesfully. \n\n", timer);
         return TRUE;
