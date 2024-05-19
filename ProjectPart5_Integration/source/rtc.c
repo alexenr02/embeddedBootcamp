@@ -388,8 +388,9 @@ void Rtcc_periodicTask( Rtcc_Clock_t *rtcc ) {
             }
         }
     }
-    printf("\n\nDate: %d/%d/%d \n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
-    printf("Hour: %d:%d:%d \n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
+    printf("\n|\tTime: %d:%d:%d\t\t\t\t|\n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
+    printf("|\tDate: %d/%d/%d\t\t\t\t|\n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
+    printf("|-----------------------------------------------|");
 }
 
 /********************************************************************************
