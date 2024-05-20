@@ -161,7 +161,8 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
                     }
                     currentTimer[i].count--;
                     if(currentTimer[i].count == 0) {
-                        Sched_stopTimer(scheduler, i);
+                        Sched_stopTimer(scheduler, i+1);
+                        currentTimer[i].callbackPtr();
                     }
                 } 
             }

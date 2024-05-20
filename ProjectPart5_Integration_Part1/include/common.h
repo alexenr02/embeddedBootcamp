@@ -21,7 +21,7 @@ typedef enum {
 
 }systemErrors_t;
 
-typedef enum {
+typedef enum messageType_t{
     DATE,
     HOUR
 }messageType_t;
