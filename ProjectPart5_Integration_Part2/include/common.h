@@ -26,6 +26,21 @@ typedef enum {
     HOUR
 }messageType_t;
 
+/**
+ * @brief   message to be used for intercomunicate both tasks
+*/
+typedef struct _Message
+{
+    uint8_t msg;
+    uint8_t hour;
+    uint8_t minutes;
+    uint8_t seconds;
+    uint8_t day;
+    uint8_t wday;
+    uint8_t month;
+    uint16_t year;
+} Message;
+
 #if 0
 #define ENABLE_DEBUG_MESSAGES
 #endif

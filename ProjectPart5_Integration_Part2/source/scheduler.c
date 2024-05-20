@@ -58,6 +58,7 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
         return FALSE;
     }
     initPtr();
+    printf("\n\n\n");
     taskId = scheduler->tasksCount;
     scheduler->taskPtr[taskId].initFunc = initPtr;
     scheduler->taskPtr[taskId].taskFunc = taskPtr;
@@ -108,9 +109,9 @@ uint8_t Sched_periodicTask( Sched_Scheduler_t *scheduler, uint8_t task , uint32_
 uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
     
 
-    bool tickCounterFlag = FALSE;             // Indicate if a tick period is reached
-    bool timeOutFlag = FALSE;                 // Indicate if the scheduler reaches the general timeout
-    bool stopTimer = FALSE;                   // Flag to stop the timer(s)
+    bool tickCounterFlag = FALSE;               // Indicate if a tick period is reached
+    bool timeOutFlag = FALSE;                   // Indicate if the scheduler reaches the general timeout
+    bool stopTimer = FALSE;                     // Flag to stop the timer(s)
     
     long generalTickStartTime = milliseconds(); // Scheduler start time 
     long generalTickLastTime = milliseconds();  // Scheduler last time since last computer tick
@@ -155,13 +156,13 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
             for( uint8_t i = 0; i < scheduler->timersCount; i++ ) {
                 Sched_Timer_t *currentTimer = scheduler->timerPtr;
                 if( tickCounterFlag == TRUE && currentTimer[i].startFlag == TRUE) {
-                    if (currentTimer[i].runFlag == FALSE) {
-                        printf("\n\ntimer %d running\n\n", i+1);
-                        currentTimer[i].runFlag = TRUE;
-                    }
                     currentTimer[i].count--;
                     if(currentTimer[i].count == 0) {
-                        Sched_stopTimer(scheduler, i);
+                        Sched_stopTimer(scheduler, i+1);
+                        if(currentTimer[i].callbackPtr != NULL) {
+                            currentTimer[i].callbackPtr();
+                        }
+                        
                     }
                 } 
             }
@@ -221,7 +222,7 @@ uint8_t Sched_startTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
         scheduler->timerPtr[timer - 1].startFlag = TRUE;
         scheduler->timerPtr[timer - 1].count = (scheduler->timerPtr[timer - 1].timeout)/scheduler->tick;
 
-        printf("Timer %d reloaded and activated succesfully. \n\n", timer);
+        //printf("\nTimer %d reloaded and activated succesfully. \n\n", timer);
         return TRUE;
     } else {
         return FALSE;
@@ -232,7 +233,7 @@ uint8_t Sched_stopTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
     /* timer is registered and it has a valid ID */
     if ( timer <= scheduler->timers && scheduler->timersCount > 0 ) {
         scheduler->timerPtr[timer - 1].startFlag = FALSE;
-        printf("\ntimer %d stopped\n", timer);
+        //printf("\ntimer %d stopped\n", timer); Imprimir esto causa bug de date = 0 en el timer 2, why?????
         return TRUE;
     } else {
         return FALSE;

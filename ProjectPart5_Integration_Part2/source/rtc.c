@@ -165,7 +165,7 @@ uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t ye
         default:
         break;
     }
-    PRINT_PARAMS("Date: %d/%d/%d\n", day,month,year);
+   
     uint16_t dayOfWeek = year;
     uint8_t lastTwoDigits = year;
     if ( (dayOfWeek - 2000) < 0 ) {
@@ -390,9 +390,9 @@ void Rtcc_periodicTask( Rtcc_Clock_t *rtcc ) {
             }
         }
     }
-    printf("\n|\tTime: %d:%d:%d\t\t\t\t|\n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
-    printf("|\tDate: %d/%d/%d\t\t\t\t|\n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
-    printf("|-----------------------------------------------|");
+    //printf("\n|\tTime: %d:%d:%d\t\t\t\t|\n", rtcc->tm_hour, rtcc->tm_min, rtcc->tm_sec);
+    //printf("|\tDate: %d/%d/%d\t\t\t\t|\n", rtcc->tm_day, rtcc->tm_mon, rtcc->tm_year);
+    //printf("|-----------------------------------------------|");
 }
 
 /********************************************************************************

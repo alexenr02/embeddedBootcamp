@@ -1,28 +1,14 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
 #include "common.h"
 #include "scheduler.h"
 #include "queue.h"
 #include "rtc.h"
 
-/**
- * @brief   message to be used for intercomunicate both tasks
-*/
-typedef struct _Message
-{
-    uint8_t msg;
-    uint8_t hour;
-    uint8_t minutes;
-    uint8_t seconds;
-    uint8_t day;
-    uint8_t wday;
-    uint8_t month;
-    uint16_t year;
-} Message;
-
-#define TASKS_N     2
+#define TASKS_N     1
 #define TICK_VAL    100
-#define TIMERS_N    1
+#define TIMERS_N    2
 
 static Sched_Task_t         tasks[ TASKS_N ];
 static Sched_Scheduler_t    Sche;
@@ -30,12 +16,13 @@ static Rtcc_Clock_t         rtccClock;
 static Queue_Queue_t        rtccQueue;
 static Sched_Timer_t        timers[ TIMERS_N ];
 static unsigned char        TimerId;
+static unsigned char        TimerId2;
 
 void Init_500ms(void);
-void Init_1000ms(void);
 void Task_500ms(void);
-void Task_1000ms(void);
+void Init_Rtcc(void);
 void Callback(void);
+void Callback2(void);
 int main( void )
 {
     unsigned char TaskId;
@@ -48,20 +35,52 @@ int main( void )
     Queue_initQueue( &rtccQueue );
 
     /*init the scheduler with two tasks and a tick time of 100ms and run for 10 seconds only*/
-    Sched_initScheduler( &Sche, TASKS_N, TICK_VAL, 10000, tasks, 1, timers );
+    Sched_initScheduler( &Sche, TASKS_N, TICK_VAL, 30000, tasks, TIMERS_N, timers );
 
     /*register two task with thier corresponding init fucntions and their periodicyt, 100ms and 500ms*/
-    Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 );
-    Sched_registerTask( &Sche, Init_1000ms, Task_1000ms, 1000 );
-    printf("\n\n\n");
-    //TimerId     = Sched_registerTimer( &Sche, 3000u, Callback );
-    //Sched_startTimer(&Sche, TimerId);
-    PRINT_PARAMS("Task ID: %d, timer ID: %d \n\n", TaskId, TimerId);
+    if ( Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 ) == FALSE ) {
+        printf("\nError:Could not register task.\n");
+        return 0;
+    }
+    
+    TimerId     = Sched_registerTimer( &Sche, 1000u, Callback );
+    if ( TimerId == FALSE ) {
+        printf("\nError:Could not register timer.\n");
+        return 0;
+    }
 
+    TimerId2     = Sched_registerTimer( &Sche, 5000u, Callback2);
+    if ( TimerId2 == FALSE ) {
+        printf("\nError:Could not register timer.\n");
+        return 0;
+    }
+
+    Init_Rtcc();
+
+    if ( Sched_startTimer(&Sche, TimerId) == FALSE ) {
+        printf("\nError: Could not start timer.\n");
+    }
+
+    if ( Sched_startTimer(&Sche, TimerId2) == FALSE ) {
+        printf("\nError: Could not start timer.\n");
+    }
+    
     /*run the scheduler for the mount of time stablished in Sche.timeout*/
     Sched_startScheduler( &Sche );
 
     return 0;
+}
+
+/**
+ * @brief   Init function for RTC
+ * Print a message to the console to indicate that the task is running
+*/
+void Init_Rtcc(void)
+{
+    Rtcc_clockInit( &rtccClock );
+    Rtcc_setTime( &rtccClock, 12, 30, 0 );
+    Rtcc_setDate( &rtccClock, 24, 6, 1984 );
+    printf("Init RTC\n");
 }
 
 /**
@@ -75,20 +94,6 @@ void Init_500ms(void)
 }
 
 /**
- * @brief   Init task for 1000ms task
- *
- * Print a message to the console to indicate that the task is running
- * and init the clock to 12:30:00 24/6/1984
-*/
-void Init_1000ms(void)
-{
-    Rtcc_clockInit( &rtccClock );
-    Rtcc_setTime( &rtccClock, 12, 30, 0 );
-    Rtcc_setDate( &rtccClock, 24, 6, 1984 );
-    printf("Init task 1000 millisecond\n");
-}
-
-/**
  * @brief   500ms task
  *
  * Read the queue and print the time and date if a new message arrives
@@ -96,57 +101,67 @@ void Init_1000ms(void)
 void Task_500ms(void)
 {
     Message msgToRead;
-    static int loop = 0;
-    //printf("\n\t\t\t\t\t\tThis is a counter from task 500ms: %d", loop++);
     printf("\n\t\t\t\t\t\t\t|---------------------------------------|");
     printf("\n\t\t\t\t\t\t\t|\tRunning <- Task 500 ms\t\t|");
-
     /* Query if a new message arrive from the queue */
-    if( Queue_isQueueEmpty( &rtccQueue ) == 0 )
+    if( Queue_isQueueEmpty( &rtccQueue ) == FALSE )
     {
         /* Read the message in the queue */
-        Queue_readData( &rtccQueue, &msgToRead );
-        printf("\n\t\t\t\t\t\t\t|\tData Received:\t\t\t|");
-        switch (msgToRead.msg) {
-            case HOUR:
-                printf("\n\t\t\t\t\t\t\t|\tTask 500 ms: Time - %d:%d:%d\t|\n", msgToRead.hour, msgToRead.minutes, msgToRead.seconds );
-                break;
-            case DATE:
-                printf("\n\t\t\t\t\t\t\t|\tTask 500 ms: Date - %d/%d/%d\t|\n", msgToRead.day, msgToRead.month, msgToRead.year );
-                break;
-            default:
-                break;
+        if(Queue_readData( &rtccQueue, &msgToRead ) == FALSE) {
+            printf("\nError reading from the queue\n");
+        } else {
+            printf("\n\t\t\t\t\t\t\t|\tData Received:\t\t\t|");
+            switch (msgToRead.msg) {
+                case DATE:
+                    printf("\n\t\t\t\t\t\t\t|\tTask 500 ms: Date - %d/%d/%d\t|\n", msgToRead.day, msgToRead.month, msgToRead.year );
+                    break;
+                case HOUR:
+                    printf("\n\t\t\t\t\t\t\t|\tTask 500 ms: Time - %d:%d:%d\t|\n", msgToRead.hour, msgToRead.minutes, msgToRead.seconds );
+                    break;
+                default:
+                    break;
+            }
         }
-        
-        
     }
     printf("\t\t\t\t\t\t\t|---------------------------------------|\n");
 }
 
-/**
- * @brief   1000ms task
- *
- * Poll the Rtcc periodic task and get the time and date from the clock and send it to
- * the 500ms task using a queue
-*/
-void Task_1000ms(void)
-{
-    static int loop = 0;
-    //printf("\nThis is a counter from task 1000ms: %d", loop++);
+void Callback (void) {
     printf("\n|-----------------------------------------------|");
-    printf("\n|\tRunning -> task 1000 millisecond\t|\n|\tData To Send:\t\t\t\t|");
+    printf("\n|\tRunning -> Callback                \t|\n|\tData To Send:\t\t\t\t|");
     Message msgToWrite;
     /*Clock periodic task */
     Rtcc_periodicTask( &rtccClock );
     /*get time and date and send time and date to 500ms task using a queue */
     Rtcc_getTime( &rtccClock, &msgToWrite.hour, &msgToWrite.minutes, &msgToWrite.seconds, &msgToWrite.msg );
+    printf("\n|\tTime: %d:%d:%d\t\t\t\t|\n", msgToWrite.hour, msgToWrite.minutes, msgToWrite.seconds);
     Queue_writeData( &rtccQueue, &msgToWrite );
     Rtcc_getDate( &rtccClock, &msgToWrite.day, &msgToWrite.month, &msgToWrite.year, &msgToWrite.wday, &msgToWrite.msg );
+    printf("|\tDate: %d/%d/%d\t\t\t\t|\n", msgToWrite.day, msgToWrite.month, msgToWrite.year);
     Queue_writeData( &rtccQueue, &msgToWrite );
+    printf("|-----------------------------------------------|");
+    
+    Sched_startTimer( &Sche, TimerId );
 }
 
-void Callback (void) {
+void Callback2 (void) {
+    //printf("\nexecuting callback 2\n");
     static int loop = 0;
-    printf("This is a counter from the timer callback: %d \n", loop++);
-    Sched_startTimer( &Sche, TimerId );
+    loop++;
+    //printf("This is a counter from the timer callback2: %d \n", loop++);
+    if ( loop == 1 ) {
+        Rtcc_setTime( &rtccClock, 5, 5, 5 );
+        Rtcc_setDate( &rtccClock, 25, 4, 1999 );
+    }
+    if ( loop == 2 ) {
+        Rtcc_setTime( &rtccClock, 15, 15, 15 );
+        Rtcc_setDate( &rtccClock, 15, 10, 2015 );
+    }
+    if ( loop == 3 ) {
+        Rtcc_setTime( &rtccClock, 22, 25, 25 );
+        Rtcc_setDate( &rtccClock, 25, 5, 2025 );
+        loop = 0;
+    }
+    Sched_startTimer( &Sche, TimerId2 );
+    //printf("\nfinish callback 2\n");
 }

@@ -51,6 +51,7 @@ uint8_t Queue_writeData( Queue_Queue_t* queue, void *data ) {
         if ( queue->Tail == queue->Elements ) {
             queue->Full = TRUE;
             queue->Tail = 0;
+            queue->Head = 0;
         }
         return TRUE;
     }           
@@ -58,13 +59,14 @@ uint8_t Queue_writeData( Queue_Queue_t* queue, void *data ) {
 
 uint8_t Queue_readData( Queue_Queue_t* queue, void* data ) {
     uint8_t* ptrActualPos = queue->Buffer;
-    uint8_t* ptrToRead = ptrActualPos + (queue->Head * queue->Size);
-    
+    uint8_t* ptrToRead = NULL;
 
     if ( queue->Empty == FALSE ) {
+        ptrToRead = ptrActualPos + (queue->Head * queue->Size);
         memcpy(data, ptrToRead, sizeof((queue->Size)*queue->Elements));
         queue->Head++;         //   Increase position to prepare for next read
-        //queue->Tail--;
+    } else {
+        return FALSE;
     }
     // if at last index in buffer, set read Index back to 0 
     if ( queue->Head == queue->Tail ) {
@@ -72,6 +74,7 @@ uint8_t Queue_readData( Queue_Queue_t* queue, void* data ) {
         queue->Head = 0;
         queue->Tail = 0;
     }
+    return TRUE;
 }
 
 uint8_t Queue_isQueueEmpty( Queue_Queue_t* queue ) {
