@@ -73,11 +73,11 @@ uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void),
 uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task ) {
     uint8_t flagOn = TRUE;
     
-    //if ( (scheduler->tasksCount < task) || (task < 1)  ) {
-       // flagOn = 0;
-    //}
+    if ( (scheduler->tasksCount < task) || (task < 1)  ) {
+        flagOn = 0;
+    }
 
-    scheduler->taskPtr[task].startFlag = flagOn;
+    scheduler->taskPtr[task-1].startFlag = flagOn;
 
     return flagOn;
 }
@@ -85,11 +85,11 @@ uint8_t Sched_startTask ( Sched_Scheduler_t *scheduler, uint8_t task ) {
 uint8_t Sched_stopTask( Sched_Scheduler_t *scheduler, uint8_t task ) {
     uint8_t flagOn = FALSE;
     
-    /*if ( (scheduler->tasksCount < task) || (task < 1)  ) {
+    if ( (scheduler->tasksCount < task) || (task < 1)  ) {
         flagOn = 0;
-    }*/
+    }
 
-    scheduler->taskPtr[task].startFlag = flagOn;
+    scheduler->taskPtr[task-1].startFlag = flagOn;
 
     return flagOn;
 }
