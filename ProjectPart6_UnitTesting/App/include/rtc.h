@@ -6,7 +6,9 @@
 /********************************************************************************
  * Constant Definitions
  *******************************************************************************/
-
+/**
+ * @brief enum with the months of the year
+*/
 enum {
     January = 1,
     February,
@@ -22,6 +24,9 @@ enum {
     December
 };
 
+/**
+ * @brief Enum with the days of the week
+*/
 enum {
     Sunday,
     Monday,
@@ -36,7 +41,7 @@ enum {
  * Data Prototypes
  *******************************************************************************/
 
-/* Control union structure to handle certain number of flags each of them represented by a single bit */
+/** @brief Control union structure to handle certain number of flags each of them represented by a single bit */
 typedef union _Rtcc_Ctrl {
     uint8_t Register;   /* 8 bit variable */
     struct _bits {
@@ -47,7 +52,7 @@ typedef union _Rtcc_Ctrl {
     } bits;
 } Rtcc_Ctrl_t;
 
-/* Control structure to pass parameter on each interface */
+/** @brief Control structure to pass parameter on each interface */
 typedef struct _Rtcc_Clock {
     uint8_t         tm_sec;         /*!< seconds, range 0 to 59 */
     uint8_t         tm_min;         /*!< minutes, range 0 to 59 */
@@ -68,90 +73,105 @@ typedef struct _Rtcc_Clock {
  * External Functions Prototypes
  *******************************************************************************/
 /**
- * Function 
+ * @brief Function initialize the RTC clock
  * 
- * \param  
+ * \param rtcc pointer to the rtc clock data
  * 
  * \return none
  */
 void Rtcc_clockInit(Rtcc_Clock_t *rtcc);
 
 /**
- * Function 
+ * @brief Function to set the time values into the rtc clock
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  hour     hour data for the RTC clock, range 0 to 23 
+ * \param  minutes  minutes data for the RTC clock, range 0 to 59 
+ * \param  seconds  seconds data for the RTC clock, range 0 to 59
  * 
- * \return none
+ * \return TRUE if the setting was successful, otherwise FALSE 
  */
 uint8_t Rtcc_setTime(Rtcc_Clock_t *rtcc, uint8_t hour, uint8_t minutes, uint8_t seconds);
 
 /**
- * Function 
+ * @brief Function to set the date values into the rtc clock
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  day      day data for the RTC clock, range 1 to 31 
+ * \param  month    month data for the RTC clock, range 1 to 12 
+ * \param  year     year data for the RTC clock, range 1900 to 2100  
  * 
- * \return none
+ * \return TRUE if the setting was successful, otherwise FALSE 
  */
 uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t year);
 
 /**
- * Function 
+ * @brief Function to set the alarm values into the rtc clock
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  hour     hour data for the RTC clock alarm, range 0 to 23 
+ * \param  minutes  minutes data for the RTC clock alarm, range 0 to 59
  * 
- * \return none
+ * \return TRUE if the setting was successful, otherwise FALSE 
  */
 uint8_t Rtcc_setAlarm(Rtcc_Clock_t *rtcc, uint8_t hour, uint8_t minutes);
 
 /**
- * Function 
+ * @brief Function to get the current time of the RTC clock
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  hour     hour data for the RTC clock alarm, range 0 to 23 
+ * \param  minutes  minutes data for the RTC clock alarm, range 0 to 59
  * 
- * \return none
+ * \return TRUE if the time was obtenined successfully, otherwise FALSE 
  */
 void Rtcc_getTime(Rtcc_Clock_t *rtcc, uint8_t *hour, uint8_t *minutes, uint8_t *seconds, uint8_t *messageType);
 
 /**
- * Function 
+ * @brief Function to get the current date of the RTC clock
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  day      day data for the RTC clock, range 1 to 31 
+ * \param  month    month data for the RTC clock, range 1 to 12 
+ * \param  year     year data for the RTC clock, range 1900 to 2100
  * 
- * \return none
+ * \return TRUE if the date was obtenined successfully, otherwise FALSE 
  */
 void Rtcc_getDate(Rtcc_Clock_t *rtcc, uint8_t* day, uint8_t* month, uint16_t* year, uint8_t* weekDay, uint8_t *messageType);
 
 /**
- * Function 
+ * @brief Function to get the alarm values into the rtc clock 
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
+ * \param  hour     hour data for the RTC clock alarm, range 0 to 23 
+ * \param  minutes  minutes data for the RTC clock alarm, range 0 to 59 
  * 
- * \return none
+ * \return TRUE if the alarm was obtenined successfully, otherwise FALSE 
  */
 uint8_t Rtcc_getAlarm(Rtcc_Clock_t *rtcc, uint8_t* hour, uint8_t* minutes );
 
 /**
- * Function 
+ * @brief Function to delete alarm
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data 
  * 
- * \return none
+ * \return TRUE if the alarm was cleared successfully, otherwise FALSE 
  */
 void Rtcc_clearAlarm( Rtcc_Clock_t *rtcc );
 
 /**
- * Function 
+ * @brief Function to get the alarm flag status
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
  * 
- * \return none
+ * \return TRUE if the alarm was cleared successfully, otherwise FALSE 
  */
 uint8_t Rtcc_getAlarmFlag( Rtcc_Clock_t *rtcc );
 
 /**
- * Function 
+ * @brief Function to monitor the time and date values based on any regular clock functionality.
  * 
- * \param  
+ * \param  rtcc     pointer to the rtc clock data
  * 
  * \return none
  */

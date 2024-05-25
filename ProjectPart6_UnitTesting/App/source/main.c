@@ -1,21 +1,11 @@
-
-/******************************************************************************
+/*! \file main.c
+ *  \brief file that contains the main program.
  *
- *
- *
- *
- * Copyright (C) 1997-2015 by Dimitri van Heesch.
- *
- * Permission to use, copy, modify, and distribute this software and its
- * documentation under the terms of the GNU General Public License is hereby
- * granted. No representations are made about the suitability of this software
- * for any purpose. It is provided "as is" without express or implied warranty.
- * See the GNU General Public License for more details.
- *
- * Documents produced by Doxygen are derivative works derived from the
- * input used in their production; they are not affected by this license.
- *
+ *  This file contains main(), general structs, init functions, task functions and callbacks.
+ *  This program runs a couple of tasks and timers and verify that the tasks can run correctly 
+ *  and sharing information with the timers using a queue.
  */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -43,16 +33,7 @@ void Task_500ms(void);
 void Init_Rtcc(void);
 void Callback(void);
 void Callback2(void);
-/*! \file
- *  \brief main entry point for doxygen
- *
- *  This file contains main()
- */
 
-/*! Default main. The idea of separating this from the rest of doxygen,
- *  is to make it possible to write your own main, with a different
- *  generateOutput() function for instance.
- */
 int main( void )
 {
     unsigned char TaskId;
@@ -158,6 +139,11 @@ void Task_500ms(void)
     printf("\t\t\t\t\t\t\t|---------------------------------------|\n");
 }
 
+/**
+ * @brief   callback function of timer 1
+ *
+ * Obtains the hour and date every 500 ms and sends it to the queue
+*/
 void Callback (void) {
     printf("\n|-----------------------------------------------|");
     printf("\n|\tRunning -> Callback                \t|\n|\tData To Send:\t\t\t\t|");
@@ -176,6 +162,11 @@ void Callback (void) {
     Sched_startTimer( &Sche, TimerId );
 }
 
+/**
+ * @brief   callback function of timer 2
+ *
+ * change the date and time after certain periods
+*/
 void Callback2 (void) {
     //printf("\nexecuting callback 2\n");
     static int loop = 0;

@@ -16,5 +16,3 @@ target_include_directories(main
   PUBLIC
   "./App/include"
 )
-
-add_subdirectory(docs)

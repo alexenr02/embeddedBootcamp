@@ -53,6 +53,8 @@ uint8_t Queue_writeData( Queue_Queue_t* queue, void *data ) {
             queue->Tail = 0;
             queue->Head = 0;
         }
+        printf("\nwHEAD: %d\n", queue->Head);
+        printf("\nwTAIL: %d\n", queue->Tail);
         return TRUE;
     }           
 }
@@ -69,11 +71,13 @@ uint8_t Queue_readData( Queue_Queue_t* queue, void* data ) {
         return FALSE;
     }
     // if at last index in buffer, set read Index back to 0 
-    if ( queue->Head == queue->Tail ) {
+    if ( queue->Head == queue->Elements ) {
         queue->Empty = TRUE;
         queue->Head = 0;
         queue->Tail = 0;
     }
+    printf("\nrHEAD: %d\n", queue->Head);
+    printf("\nrTAIL: %d\n", queue->Tail);
     return TRUE;
 }
 

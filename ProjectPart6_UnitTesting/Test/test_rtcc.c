@@ -17,7 +17,7 @@ void tearDown(void)
  *      
  * The test verify that the rtc init function works properly
  */
-void test__Rtcc_clockInit_clock( void )
+void test__Rtcc_clockInit( void )
 {
     Rtcc_Clock_t rtccClock;
     Rtcc_clockInit( &rtccClock );
@@ -40,7 +40,7 @@ void test__Rtcc_clockInit_clock( void )
  *      
  * The test verify that the rtc setTime function works properly
  */
-void test__Rtcc_clockInit_setTime( void )
+void test__Rtcc_setTime( void )
 {
     Rtcc_Clock_t rtccClock;
     Rtcc_clockInit( &rtccClock );
@@ -56,7 +56,7 @@ void test__Rtcc_clockInit_setTime( void )
  *      
  * The test verify that the rtc setDate function works properly
  */
-void test__Rtcc_clockInit_setDate( void )
+void test__Rtcc_setDate( void )
 {
     Rtcc_Clock_t rtccClock;
     Rtcc_clockInit( &rtccClock );
@@ -80,4 +80,36 @@ void test__Rtcc_clockInit_setDate( void )
     Rtcc_setDate( &rtccClock, 41, 5, 2500 );
     TEST_ASSERT_EQUAL( 2024, rtccClock.tm_year ); 
     TEST_ASSERT_EQUAL( 23, rtccClock.tm_day ); 
+}
+
+/**
+ * @brief   Test Rtcc_setAlarm function
+ *      
+ * The test verify that the rtc setAlarm function works properly
+ */
+void test__Rtcc_setAlarm( void )
+{
+    Rtcc_Clock_t rtccClock;
+    Rtcc_clockInit( &rtccClock );
+    Rtcc_setTime( &rtccClock, 12, 30, 0 );
+    Rtcc_setAlarm(&rtccClock, 12, 35);
+
+    TEST_ASSERT_EQUAL( 12, rtccClock.al_hour );
+    TEST_ASSERT_EQUAL( 35, rtccClock.al_min );
+}
+
+/**
+ * @brief   Test Rtcc_getTime function
+ *      
+ * The test verify that the rtc getDate function works properly
+ */
+void test__Rtcc_getTime( void )
+{
+    Rtcc_Clock_t rtccClock;
+    Rtcc_clockInit( &rtccClock );
+    Rtcc_setTime( &rtccClock, 12, 30, 0 );
+    Rtcc_setAlarm(&rtccClock, 12, 35);
+
+    TEST_ASSERT_EQUAL( 12, rtccClock.al_hour );
+    TEST_ASSERT_EQUAL( 35, rtccClock.al_min );
 }

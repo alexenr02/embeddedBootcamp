@@ -5,29 +5,30 @@
  * Constant Definitions
  *******************************************************************************/
 
-/* Arbitrary number of temporary strings */
+/// @brief Arbitrary number of temporary strings
 #define MAX_LENGTH_OF_STRING    81
-
+///  @brief Macros to report function results
 #define SUCCESS                 0
 #define FAILURE                 -1
 #define EXIT_LOOP               1
-
 #define TRUE 1
 #define FALSE 0
 
+/// @brief Enum used in functions to return empty/not empty values
 typedef enum {
     NOT_EMPTY,
     EMPTY
 
 }systemErrors_t;
 
+/// @brief Enum for specifying the queue what kind of data is being sent
 typedef enum {
     DATE,
     HOUR
 }messageType_t;
 
 /**
- * @brief   message to be used for intercomunicate both tasks
+ * @brief message to be used for intercomunicate both tasks
 */
 typedef struct _Message
 {

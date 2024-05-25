@@ -12,8 +12,8 @@
  * Data Prototypes
  *******************************************************************************/
 
-/* a queue object 
-*  contains all the information about the queue
+/**
+ * @brief Queue object. Contains all the information about the queue
 */
 typedef struct {
     void            *Buffer;
@@ -25,95 +25,60 @@ typedef struct {
     uint8_t         Full;
 }Queue_Queue_t;
 
-
-
-
 /********************************************************************************
  * External Functions Prototypes
  *******************************************************************************/
 /**
- * Function 
+ * @brief Function to initialize the queue with zero values
  * 
- * \param queue  
+ * \param queue  pointer to the queue structure
  * 
- * \return none
+ * \return void
  * 
  */
 void Queue_initQueue( Queue_Queue_t* queue );
 
 /**
- * Function 
+ * @brief Function to write data of any type in the queue
  * 
- * \param queue   
- * \param data      
+ * \param queue pointer to the queue structure
+ * \param data  pointer to the data will be inserted in the queue  
  * 
- * \return  
+ * \return  True if the write was successful
  * 
  */
 uint8_t Queue_writeData( Queue_Queue_t* queue, void *data );
 
 /**
- * Function
+ * @brief Function to read a data from the queue
  * 
- * \param  queue
+ * \param  queue pointer to the queue structure
+ * \param  data  pointer to the data where the data read will be stored
  * 
- * \return 
+ * \return True if the read was successful
  * 
  */
 uint8_t Queue_readData( Queue_Queue_t* queue, void *data );
 
 /**
- * Function 
+ * @brief Function to determine if the queue is empty
  * 
- * \param queue
+ * \param queue pointer to the queue structure
  * 
- * \return 
+ * \return True if queue is empty
  * 
  */
 uint8_t Queue_isQueueEmpty( Queue_Queue_t* queue );
 
 
 /**
- * Function 
+ * @brief Function to delete all the elements in the queue
  * 
- * \param queue
+ * \param queue pointer to the queue structure
  * 
- * \return 
+ * \return void
  * 
  */
 void Queue_flushQueue( Queue_Queue_t* queue );
 
-
-/**
- * Function 
- * 
- * \param none
- * 
- * \return none
- * 
- *
-void test__AppBuffer_initBuffer__buffer_initialization( void );
-
-/**
- * Function to test writting data into the buffer
- * 
- * \param none
- * 
- * \return none
- * 
- *
-
-void test__AppBuffer_writeData__writting_a_single_data( void );
-
-/**
- * Function to test filling all the buffer
- * 
- * \param none
- * 
- * \return none
- * 
- *
-
-void test__AppBuffer_writeData__filling_the_buffer( void );
-*/
 #endif /* __QUEUE_H */
