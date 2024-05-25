@@ -33,5 +33,5 @@ void test__Queue_initQueue__char_queue( void )
     TEST_ASSERT_EQUAL( 0, hqueue.Head );
     TEST_ASSERT_EQUAL( 0, hqueue.Tail );
     TEST_ASSERT_EQUAL( TRUE, hqueue.Empty );
-    TEST_ASSERT_EQUAL( FALSE, hqueue.Full );
+    TEST_ASSERT_EQUAL_MESSAGE( FALSE, hqueue.Full, "Queue full flag failed");
 }

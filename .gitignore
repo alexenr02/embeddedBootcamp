@@ -9,5 +9,7 @@
 !*.py
 !*.md
 !*.py
+!*.txt
+!*.yml
 #blacklist specific files that have been whitelisted
 build

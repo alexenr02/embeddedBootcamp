@@ -1,3 +1,21 @@
+
+/******************************************************************************
+ *
+ *
+ *
+ *
+ * Copyright (C) 1997-2015 by Dimitri van Heesch.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation under the terms of the GNU General Public License is hereby
+ * granted. No representations are made about the suitability of this software
+ * for any purpose. It is provided "as is" without express or implied warranty.
+ * See the GNU General Public License for more details.
+ *
+ * Documents produced by Doxygen are derivative works derived from the
+ * input used in their production; they are not affected by this license.
+ *
+ */
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -6,11 +24,13 @@
 #include "queue.h"
 #include "rtc.h"
 
-#define TASKS_N     1
-#define TICK_VAL    100
-#define TIMERS_N    2
 
-static Sched_Task_t         tasks[ TASKS_N ];
+#define TASKS_N         1
+#define TICK_VAL        100
+#define TIMERS_N        2
+#define SCHED_TIMEOUT   30000u
+
+static Sched_Task_t         tasks_array[ TASKS_N ];
 static Sched_Scheduler_t    Sche;
 static Rtcc_Clock_t         rtccClock;
 static Queue_Queue_t        rtccQueue;
@@ -23,6 +43,16 @@ void Task_500ms(void);
 void Init_Rtcc(void);
 void Callback(void);
 void Callback2(void);
+/*! \file
+ *  \brief main entry point for doxygen
+ *
+ *  This file contains main()
+ */
+
+/*! Default main. The idea of separating this from the rest of doxygen,
+ *  is to make it possible to write your own main, with a different
+ *  generateOutput() function for instance.
+ */
 int main( void )
 {
     unsigned char TaskId;
@@ -35,23 +65,23 @@ int main( void )
     Queue_initQueue( &rtccQueue );
 
     /*init the scheduler with two tasks and a tick time of 100ms and run for 10 seconds only*/
-    Sched_initScheduler( &Sche, TASKS_N, TICK_VAL, 30000, tasks, TIMERS_N, timers );
+    Sched_initScheduler( &Sche, TASKS_N, TICK_VAL, SCHED_TIMEOUT, tasks_array, TIMERS_N, timers );
 
     /*register two task with thier corresponding init fucntions and their periodicyt, 100ms and 500ms*/
     if ( Sched_registerTask( &Sche, Init_500ms, Task_500ms, 500 ) == FALSE ) {
-        printf("\nError:Could not register task.\n");
+        printf("\nError: Could not register task.\n");
         return 0;
     }
     
     TimerId     = Sched_registerTimer( &Sche, 1000u, Callback );
     if ( TimerId == FALSE ) {
-        printf("\nError:Could not register timer.\n");
+        printf("\nError: Could not register timer.\n");
         return 0;
     }
 
     TimerId2     = Sched_registerTimer( &Sche, 5000u, Callback2);
     if ( TimerId2 == FALSE ) {
-        printf("\nError:Could not register timer.\n");
+        printf("\nError: Could not register timer.\n");
         return 0;
     }
 
@@ -59,10 +89,12 @@ int main( void )
 
     if ( Sched_startTimer(&Sche, TimerId) == FALSE ) {
         printf("\nError: Could not start timer.\n");
+        return 0;
     }
 
     if ( Sched_startTimer(&Sche, TimerId2) == FALSE ) {
         printf("\nError: Could not start timer.\n");
+        return 0;
     }
     
     /*run the scheduler for the mount of time stablished in Sche.timeout*/

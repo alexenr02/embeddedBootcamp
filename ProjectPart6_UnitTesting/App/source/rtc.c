@@ -25,20 +25,7 @@
  *******************************************************************************/
 
 uint8_t months[13] = {31,28,31,30,31,30,31,30,31,30,31,31};
-enum {
-    January = 1,
-    February,
-    March,
-    April,
-    May,
-    June,
-    July,
-    August,
-    September,
-    October,
-    November,
-    December
-} months_t;
+
 /********************************************************************************
  * Private Function Prototypes
  *******************************************************************************/
@@ -243,6 +230,31 @@ uint8_t Rtcc_setDate(Rtcc_Clock_t *rtcc, uint8_t day, uint8_t month, uint16_t ye
         rtcc->tm_wday = 6;
     } else {
         rtcc->tm_wday = dayOfWeek;
+    }
+    switch (dayOfWeek) {
+        case 0:
+            rtcc->tm_wday = Saturday;
+        break;
+        case 1:
+            rtcc->tm_wday = Sunday;
+        break;
+        case 2:
+            rtcc->tm_wday = Monday;
+        break;
+        case 3:
+            rtcc->tm_wday = Tuesday;
+        break;
+        case 4:
+            rtcc->tm_wday = Wednesday;
+        break;
+        case 5:
+            rtcc->tm_wday = Thursday;
+        break;
+        case 6:
+            rtcc->tm_wday = Friday;
+        break;
+        default:
+        break;
     }
     return TRUE;
 }

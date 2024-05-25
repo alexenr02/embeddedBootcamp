@@ -44,19 +44,17 @@ void Sched_initScheduler( Sched_Scheduler_t* scheduler, uint8_t tasks, uint32_t 
     scheduler->tasksCount = 0;
     scheduler->timers = timers;
     scheduler->timerPtr = timerPtr;
+    scheduler->timersCount = 0;
     printf( "Scheduler initialized succesfully\n\n" );
 }
 
 uint8_t Sched_registerTask( Sched_Scheduler_t* scheduler, void (*initPtr)(void), void(*taskPtr)(void), uint32_t period ) {
     uint8_t taskId;
-    if ( period < scheduler->tick || period % scheduler->tick != 0 ) {
+    if ( period < scheduler->tick || period % scheduler->tick != 0 || initPtr == NULL || taskPtr == NULL || scheduler->tasksCount >= scheduler->tasks) {
+        printf("\nError: Period smaller than scheduler tick or not a factor or NULL ptr to function\n");
         return FALSE;
     }
 
-
-    if( scheduler->tasksCount > scheduler->tasks) {
-        return FALSE;
-    }
     initPtr();
     printf("\n\n\n");
     taskId = scheduler->tasksCount;
@@ -162,7 +160,6 @@ uint8_t Sched_startScheduler( Sched_Scheduler_t *scheduler ) {
                         if(currentTimer[i].callbackPtr != NULL) {
                             currentTimer[i].callbackPtr();
                         }
-                        
                     }
                 } 
             }
@@ -233,7 +230,7 @@ uint8_t Sched_stopTimer( Sched_Scheduler_t *scheduler, uint8_t timer ) {
     /* timer is registered and it has a valid ID */
     if ( timer <= scheduler->timers && scheduler->timersCount > 0 ) {
         scheduler->timerPtr[timer - 1].startFlag = FALSE;
-        //printf("\ntimer %d stopped\n", timer); Imprimir esto causa bug de date = 0 en el timer 2, why?????
+        //printf("\ntimer %d stopped\n", timer); //Imprimir esto causa bug de date = 0 en el timer 2, why?????
         return TRUE;
     } else {
         return FALSE;
